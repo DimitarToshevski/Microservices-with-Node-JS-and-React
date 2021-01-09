@@ -19,7 +19,7 @@ router.post(
       return res.status(400).send(errors.array());
     }
 
-    // const { email, password } = req.body;
+    const { email, password } = req.body;
 
     console.log('Creating a user...');
     res.send({})
