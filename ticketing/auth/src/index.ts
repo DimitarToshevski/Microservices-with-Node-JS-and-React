@@ -4,7 +4,9 @@ import { app } from './app';
 
 const start = async () => {
   if (!process.env.JWT_KEY) {
-    throw new Error('JWT_KEY must be defined');
+    throw new Error(
+      'JWT_KEY must be defined. Use kubectl create secret generic jwt-secret --from-literal=JWT_KEY=asdf'
+    );
   }
 
   try {
