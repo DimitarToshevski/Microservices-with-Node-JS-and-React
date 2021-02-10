@@ -8,11 +8,19 @@ build:
   local:
     push: false
   artifacts:
-    - image: dt/auth
+    - image: dtoshevski/auth
       context: auth
       docker:
         dockerfile: Dockerfile
       sync:
         manual:
           - src: 'src/**/*.ts'
+            dest: .
+    - image: dtoshevski/client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '**/*.js'
             dest: .
