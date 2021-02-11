@@ -10,9 +10,9 @@ export default ({ url, method, body, onSuccess }) => {
       const response = await axios[method.toLowerCase()](url, body);
 
       if (onSuccess) {
-          onSuccess(response.data)
+        onSuccess(response.data);
       }
-      
+
       return response.data;
     } catch (err) {
       setErrors(
