@@ -10,7 +10,9 @@ const start = async () => {
   }
 
   if (!process.env.MONGO_URI) {
-    throw new Error('MONGO_URI must be defined. Use the depl.yaml files');
+    throw new Error(
+      'MONGO_URI must be defined. Use the depl.yaml files'
+    );
   }
 
   try {
@@ -20,13 +22,13 @@ const start = async () => {
       useCreateIndex: true,
     });
 
-    console.log('Connected to Auth MongoDb');
+    console.log('Connected to Tickets MongoDb');
   } catch (err) {
     console.error(err);
   }
 
   app.listen(3000, () => {
-    console.log('Listening for Auth on port 3000!');
+    console.log('Listening for Tickets on port 3000!');
   });
 };
 
