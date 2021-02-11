@@ -1,8 +1,6 @@
-import request from 'supertest';
 import jwt from 'jsonwebtoken';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
-import { app } from '../app';
 
 declare global {
   namespace NodeJS {
@@ -40,8 +38,10 @@ afterAll(async () => {
 });
 
 global.signup = ()=>{
+  const id = new mongoose.Types.ObjectId().toHexString();
+
   const payload = {
-    id: '1',
+    id,
     email: 'test@test.com'
   }
 

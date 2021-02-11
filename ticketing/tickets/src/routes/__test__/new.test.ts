@@ -58,5 +58,5 @@ it('reads a ticket with valid inputs', async () => {
     tickets = await Ticket.find({});
 
     expect(tickets.length).toEqual(1);
-    expect(tickets[0].price).toEqual(20)
+    expect(tickets[0].price).toEqual('20')
 });
