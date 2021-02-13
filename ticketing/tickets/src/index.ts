@@ -16,11 +16,23 @@ const start = async () => {
     );
   }
 
+  if (!process.env.NATS_URI) {
+    throw new Error('NATS_URI must be defined. Use the depl.yaml files');
+  }
+
+  if (!process.env.NATS_CLUSTER_ID) {
+    throw new Error('NATS_CLUSTER_ID must be defined. Use the depl.yaml files');
+  }
+
+  if (!process.env.NATS_CLIENT_ID) {
+    throw new Error('NATS_CLIENT_ID must be defined. Use the depl.yaml files');
+  }
+
   try {
     await natsWrapper.connect(
-      'ticketing',
-      'ticketing-service2',
-      'http://nats-srv:4222'
+      process.env.NATS_CLUSTER_ID,
+      process.env.NATS_CLIENT_ID,
+      process.env.NATS_URI
     );
 
     natsWrapper.client.on('close', () => {
