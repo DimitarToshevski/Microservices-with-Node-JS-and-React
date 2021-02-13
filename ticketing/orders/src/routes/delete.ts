@@ -6,6 +6,8 @@ import {
   OrderStatus,
 } from '@dt-ticketing/common';
 import { Order } from '../models/order';
+import { natsWrapper } from '../nats-wrapper';
+import { OrderCancelledPublisher } from '../events/publishers/order-cancelled-publisher';
 
 const router = express.Router();
 
@@ -13,7 +15,7 @@ router.delete(
   '/api/orders/:id',
   requireAuth,
   async (req: Request, res: Response) => {
-    const order = await Order.findById(req.params.id);
+    const order = await Order.findById(req.params.id).populate('ticket');
 
     if (!order) {
       throw new NotFoundError();
@@ -27,12 +29,13 @@ router.delete(
 
     await order.save();
 
-    // new OrderCreatedPublisher(natsWrapper.client).publish({
-    //   id: order.id,
-    //   ticketId: order.ticketId,
-    //   userId: order.userId,
-    // });
-    
+    new OrderCancelledPublisher(natsWrapper.client).publish({
+      id: order.id,
+      ticket: {
+        id: order.ticket.id,
+      },
+    });
+
     res.status(200).send(order);
   }
 );

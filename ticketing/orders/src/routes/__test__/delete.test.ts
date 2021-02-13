@@ -2,6 +2,7 @@ import { OrderStatus } from '@dt-ticketing/common';
 import request from 'supertest';
 import { app } from '../../app';
 import { Ticket } from '../../models/ticket';
+import { natsWrapper } from '../../nats-wrapper';
 
 const buildTicket = async () => {
   const ticket = Ticket.build({
@@ -49,4 +50,24 @@ it('returns an error if one user tries to fetch another users order', async () =
     .set('Cookie', global.signup())
     .send()
     .expect(401);
+});
+
+
+it('publishes an event', async () => {
+  const ticket = await buildTicket();
+  const userCookies = global.signup();
+
+  const { body: order } = await request(app)
+    .post('/api/orders')
+    .set('Cookie', userCookies)
+    .send({ ticketId: ticket.id })
+    .expect(201);
+
+  await request(app)
+    .delete(`/api/orders/${order.id}`)
+    .set('Cookie', userCookies)
+    .send()
+    .expect(200);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });
