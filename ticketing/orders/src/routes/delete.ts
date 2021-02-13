@@ -3,6 +3,7 @@ import {
   requireAuth,
   NotFoundError,
   NotAuthorizedError,
+  OrderStatus,
 } from '@dt-ticketing/common';
 import { Order } from '../models/order';
 
@@ -12,8 +13,6 @@ router.delete(
   '/api/orders/:id',
   requireAuth,
   async (req: Request, res: Response) => {
-    const { title, price } = req.body;
-
     const order = await Order.findById(req.params.id);
 
     if (!order) {
@@ -23,6 +22,8 @@ router.delete(
     if (order.userId !== req.currentUser!.id) {
       throw new NotAuthorizedError();
     }
+
+    order.set({status: OrderStatus.Cancelled})
 
     await order.save();
 
