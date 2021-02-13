@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 import { app } from './app';
+import { natsWrapper } from './nats-wrapper';
 
 const start = async () => {
   if (!process.env.JWT_KEY) {
@@ -13,6 +14,14 @@ const start = async () => {
     throw new Error(
       'MONGO_URI must be defined. Use the depl.yaml files'
     );
+  }
+
+  try {
+    await natsWrapper.connect('ticketing', 'ticketing-dwq', 'http://nats-srv:4222');
+
+    console.log('Connected to Tickets NATS');
+  } catch (err) {
+    console.error(err);
   }
 
   try {
