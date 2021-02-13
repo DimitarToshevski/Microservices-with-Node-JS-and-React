@@ -17,7 +17,7 @@ const start = async () => {
   }
 
   try {
-    await natsWrapper.connect('ticketing', 'ticketing-dwq', 'http://nats-srv:4222');
+    await natsWrapper.connect('ticketing', 'ticketing-service', 'http://nats-srv:4222');
 
     console.log('Connected to Tickets NATS');
   } catch (err) {
