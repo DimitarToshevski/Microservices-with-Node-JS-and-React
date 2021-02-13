@@ -6,7 +6,6 @@ import {
   NotFoundError,
   NotAuthorizedError,
 } from '@dt-ticketing/common';
-
 import { Ticket } from '../models/ticket';
 import { natsWrapper } from '../nats-wrapper';
 import { TicketUpdatedPublisher } from '../events/publishers/ticket-updated-publisher';
