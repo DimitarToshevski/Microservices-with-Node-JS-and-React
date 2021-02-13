@@ -23,7 +23,7 @@ router.delete(
       throw new NotAuthorizedError();
     }
 
-    order.set({status: OrderStatus.Cancelled})
+    order.status = OrderStatus.Cancelled;
 
     await order.save();
 
@@ -32,7 +32,7 @@ router.delete(
     //   ticketId: order.ticketId,
     //   userId: order.userId,
     // });
-
+    
     res.status(200).send(order);
   }
 );
