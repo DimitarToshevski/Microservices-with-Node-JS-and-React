@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 
 // An interface that describes the properties that are required to create a new Ticket
 interface ITicket {
@@ -17,6 +18,7 @@ interface ITicketDoc extends mongoose.Document {
   title: string;
   price: number;
   userId: string;
+  version: number;
 }
 
 const ticketSchema = new mongoose.Schema(
@@ -36,14 +38,17 @@ const ticketSchema = new mongoose.Schema(
   },
   {
     toJSON: {
-      transform(doc, ret) {
+      transform(_doc, ret) {
         ret.id = ret._id;
         delete ret._id;
-      },
-      versionKey: false,
+      }
     },
   }
 );
+
+ticketSchema.set('versionKey', 'version')
+
+ticketSchema.plugin(updateIfCurrentPlugin)
 
 ticketSchema.statics.build = (attrs: ITicket) => {
   return new Ticket(attrs);

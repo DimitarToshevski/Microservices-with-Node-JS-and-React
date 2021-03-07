@@ -1,5 +1,6 @@
 import { OrderStatus } from '@dt-ticketing/common';
 import mongoose from 'mongoose';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 import { Order } from './order';
 
 // An interface that describes the properties that are required to describe a Ticket
@@ -12,12 +13,17 @@ interface ITicket {
 // An interface that describes the properties that a Ticket model has
 interface ITicketModel extends mongoose.Model<ITicketDoc> {
   build(attrs: ITicket): ITicketDoc;
+  findByEvent(event: {
+    id: string;
+    version: number;
+  }): Promise<ITicketDoc | null>;
 }
 
 // An interface that describes the properties that a Ticket document has
 export interface ITicketDoc extends mongoose.Document {
   title: string;
   price: number;
+  version: number;
   isReserved(): Promise<boolean>;
 }
 
@@ -30,23 +36,32 @@ const ticketSchema = new mongoose.Schema(
     price: {
       type: String,
       required: true,
+      min: 0,
     },
   },
   {
     toJSON: {
-      transform(doc, ret) {
+      transform(_doc, ret) {
         ret.id = ret._id;
         delete ret._id;
       },
-      versionKey: false,
     },
   }
 );
 
+ticketSchema.set('versionKey', 'version');
+
+ticketSchema.plugin(updateIfCurrentPlugin);
+
+ticketSchema.statics.findByEvent = (event: { id: string; version: number }) => {
+  return Ticket.findOne({ _id: event.id, version: event.version - 1 });
+};
+
 ticketSchema.statics.build = (attrs: ITicket) => {
   return new Ticket({
-    ...attrs,
     _id: attrs.id,
+    title: attrs.title,
+    price: attrs.price,
   });
 };
 
