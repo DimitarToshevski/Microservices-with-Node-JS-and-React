@@ -11,6 +11,10 @@ import { OrderCancelledPublisher } from '../events/publishers/order-cancelled-pu
 
 const router = express.Router();
 
+function logMErrors() {
+  console.error('something');
+}
+
 router.delete(
   '/api/orders/:id',
   requireAuth,
@@ -25,6 +29,13 @@ router.delete(
       throw new NotAuthorizedError();
     }
 
+    if (order.status === OrderStatus.AwaitingPayment) {
+      logMErrors()
+    } 
+    if (order.status === OrderStatus.Cancelled) {
+      debugger
+      logMErrors();
+    } 
     order.status = OrderStatus.Cancelled;
 
     await order.save();
